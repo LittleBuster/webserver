@@ -12,7 +12,12 @@ public class WebServer {
     void start() throws IOException {
         server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/", new IndexHandler());
-        server.createContext("/files", new FileHandler());
+        server.createContext("/images", new FileHandler(Path.FilesDir));
+        server.createContext("/js", new FileHandler(Path.FilesDir));
+        server.createContext("/css", new FileHandler(Path.FilesDir));
+        server.createContext("/fonts", new FileHandler(Path.FilesDir));
+        server.createContext("/login", new LoginHandler());
+        server.createContext("/main", new MainHandler());
         server.start();
     }
 

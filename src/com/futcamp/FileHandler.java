@@ -10,34 +10,47 @@ import java.io.OutputStream;
 import java.net.URI;
 
 public class FileHandler implements HttpHandler {
+    private String path_;
+
+    public FileHandler(String path) {
+        path_ = path;
+    }
 
     @Override
-    public void handle(HttpExchange t) throws IOException {
+    public void handle(HttpExchange t) {
         URI uri = t.getRequestURI();
-        File file = new File(Path.FileDir + uri.getPath()).getCanonicalFile();
-        if (!file.getPath().startsWith(Path.FileDir)) {
-            String response = "<h1>403 (Forbidden)</h1>\n";
-            t.sendResponseHeaders(403, response.length());
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        } else if (!file.isFile()) {
-            String response = "<h1>404 (Not Found)</h1>\n";
-            t.sendResponseHeaders(404, response.length());
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        } else {
-            t.sendResponseHeaders(200, 0);
-            OutputStream os = t.getResponseBody();
-            FileInputStream fs = new FileInputStream(file);
-            final byte[] buffer = new byte[0x10000];
-            int count = 0;
-            while ((count = fs.read(buffer)) >= 0) {
-                os.write(buffer,0,count);
+
+        System.out.println(path_ + uri.getPath());
+
+        try {
+            File file = new File(path_ + uri.getPath()).getCanonicalFile();
+            if (!file.getPath().startsWith(path_)) {
+                String response = "<h1>403 (Forbidden)</h1>\n";
+                t.sendResponseHeaders(403, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } else if (!file.isFile()) {
+                String response = "<h1>404 (Not Found)</h1>\n";
+                t.sendResponseHeaders(404, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } else {
+                t.sendResponseHeaders(200, 0);
+                OutputStream os = t.getResponseBody();
+                FileInputStream fs = new FileInputStream(file);
+                final byte[] buffer = new byte[0x10000];
+                int count = 0;
+                while ((count = fs.read(buffer)) >= 0) {
+                    os.write(buffer, 0, count);
+                }
+                fs.close();
+                os.close();
             }
-            fs.close();
-            os.close();
+        } catch (Exception e) {
+            System.out.println("Failed to load file: " + e.getMessage());
+            System.out.println("Request: " + t.getRequestURI());
         }
     }
 

@@ -2,6 +2,7 @@ package com.futcamp;
 
 
 public class Path {
-    public static String FileDir = "/home/serg";
-    public static String IndexPage = "/home/serg/index.html";
+    public static String FilesDir = "/home/serg/site";
+    public static String IndexPage = "/home/serg/site/templates/index.html";
+    public static String MainPage = "/home/serg/site/templates/main.html";
 }
